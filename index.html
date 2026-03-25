@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ruby DK Conference 2026</title>
+  <style>
+    :root {
+      --ruby: #CC342D;
+      --ruby-dark: #A12A24;
+      --bg: #FAFAFA;
+      --text: #2D2D2D;
+      --text-light: #555;
+      --card-bg: #FFFFFF;
+      --border: #E0E0E0;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--ruby) 0%, var(--ruby-dark) 100%);
+      color: white;
+      text-align: center;
+      padding: 4rem 1.5rem 3rem;
+    }
+
+    header .gem {
+      font-size: 3.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+
+    header .subtitle {
+      font-size: 1.15rem;
+      opacity: 0.9;
+      font-weight: 400;
+    }
+
+    .details-bar {
+      background: var(--ruby-dark);
+      color: white;
+      text-align: center;
+      padding: 1rem 1.5rem;
+      font-size: 1.05rem;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .details-bar span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    main {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+
+    section {
+      margin-bottom: 2.5rem;
+    }
+
+    h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: var(--ruby);
+    }
+
+    p {
+      color: var(--text-light);
+      margin-bottom: 0.75rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .schedule-item {
+      display: flex;
+      gap: 1rem;
+      align-items: baseline;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .schedule-item:last-child { border-bottom: none; }
+
+    .schedule-time {
+      font-weight: 600;
+      min-width: 6rem;
+      color: var(--text);
+    }
+
+    .schedule-desc {
+      color: var(--text-light);
+    }
+
+    .organizers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .organizer-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+      text-align: center;
+      text-decoration: none;
+      color: var(--text);
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .organizer-card:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      transform: translateY(-2px);
+    }
+
+    .organizer-card .name {
+      font-weight: 700;
+      font-size: 1.05rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .organizer-card .url {
+      font-size: 0.85rem;
+      color: var(--ruby);
+    }
+
+    .rsvp-section {
+      text-align: center;
+    }
+
+    .rsvp-form {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 2rem;
+      max-width: 440px;
+      margin: 0 auto;
+    }
+
+    .rsvp-form input {
+      display: block;
+      width: 100%;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    .rsvp-form input:focus {
+      outline: none;
+      border-color: var(--ruby);
+      box-shadow: 0 0 0 3px rgba(204, 52, 45, 0.12);
+    }
+
+    .rsvp-form button {
+      background: var(--ruby);
+      color: white;
+      border: none;
+      padding: 0.85rem 2.5rem;
+      font-size: 1.05rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+      width: 100%;
+      font-family: inherit;
+    }
+
+    .rsvp-form button:hover {
+      background: var(--ruby-dark);
+    }
+
+    .rsvp-note {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-top: 0.75rem;
+    }
+
+    .map-link {
+      color: var(--ruby);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .map-link:hover { text-decoration: underline; }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.75rem; }
+      .details-bar { flex-direction: column; gap: 0.5rem; }
+      .organizers { grid-template-columns: 1fr; }
+      header { padding: 3rem 1.5rem 2rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="gem">&#x1F48E;</div>
+    <h1>Ruby DK Conference 2026</h1>
+    <p class="subtitle">A mini conference for the Danish Ruby community</p>
+  </header>
+
+  <div class="details-bar">
+    <span>&#128197; Saturday, November 7, 2026</span>
+    <span>&#128205; Copenhagen, Denmark</span>
+    <span>&#128340; 10:00 &ndash; 17:00</span>
+  </div>
+
+  <main>
+    <section>
+      <h2>About</h2>
+      <p>
+        Ruby DK Conference is a one-day mini conference bringing together Ruby developers from across Denmark.
+        Whether you're a seasoned Rubyist or just getting started, join us for a day of talks, learning,
+        and networking with the Danish Ruby community.
+      </p>
+      <p>
+        Talks will be announced soon &mdash; stay tuned!
+      </p>
+    </section>
+
+    <section>
+      <h2>Schedule</h2>
+      <div class="card">
+        <div class="schedule-item">
+          <span class="schedule-time">09:30</span>
+          <span class="schedule-desc">Doors open &amp; coffee</span>
+        </div>
+        <div class="schedule-item">
+          <span class="schedule-time">10:00</span>
+          <span class="schedule-desc">Talks begin</span>
+        </div>
+        <div class="schedule-item">
+          <span class="schedule-time">12:30</span>
+          <span class="schedule-desc">Lunch break</span>
+        </div>
+        <div class="schedule-item">
+          <span class="schedule-time">13:30</span>
+          <span class="schedule-desc">Afternoon talks</span>
+        </div>
+        <div class="schedule-item">
+          <span class="schedule-time">17:00</span>
+          <span class="schedule-desc">Closing &amp; networking</span>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Venue</h2>
+      <div class="card">
+        <p style="color: var(--text); font-weight: 600; margin-bottom: 0.25rem;">
+          Meldahlsgade 5, 1613 K&oslash;benhavn V
+        </p>
+        <p>Copenhagen, Denmark</p>
+        <a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Meldahlsgade+5,+1613+K%C3%B8benhavn+V" target="_blank" rel="noopener">
+          View on Google Maps &rarr;
+        </a>
+      </div>
+    </section>
+
+    <section>
+      <h2>Organized by</h2>
+      <div class="organizers">
+        <a class="organizer-card" href="https://www.copenhagenrb.dk/" target="_blank" rel="noopener">
+          <div class="name">Copenhagen Ruby</div>
+          <div class="url">copenhagenrb.dk</div>
+        </a>
+        <a class="organizer-card" href="https://aarhus-ruby-group-site.onrender.com/" target="_blank" rel="noopener">
+          <div class="name">Aarhus Ruby Group</div>
+          <div class="url">aarhus-ruby-group-site.onrender.com</div>
+        </a>
+      </div>
+    </section>
+
+    <section class="rsvp-section">
+      <h2>RSVP</h2>
+      <p>Reserve your spot &mdash; it's free!</p>
+      <form class="rsvp-form" action="https://formspree.io/f/xvzvpygy" method="POST">
+        <input type="text" name="name" placeholder="Your name" required />
+        <input type="email" name="email" placeholder="Your email" required />
+        <button type="submit">RSVP Now</button>
+      </form>
+      <p class="rsvp-note">We'll send you a confirmation and updates about the schedule.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Ruby DK Conference &mdash; Organized by Copenhagen Ruby &amp; Aarhus Ruby Group</p>
+  </footer>
+</body>
+</html>
