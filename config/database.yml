@@ -22,13 +22,13 @@ default: &default
 
 development:
   <<: *default
-  database: hyggerb_skeleton_development
+  database: hyggerb_development
 
   # The specified database role being used to connect to PostgreSQL.
   # To create additional roles in PostgreSQL see `$ createuser --help`.
   # When left blank, PostgreSQL will use the default role. This is
   # the same name as the operating system user running Rails.
-  #username: hyggerb_skeleton
+  #username: hyggerb
 
   # The password associated with the PostgreSQL role (username).
   #password:
@@ -56,7 +56,7 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: hyggerb_skeleton_test
+  database: hyggerb_test
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -80,6 +80,6 @@ test:
 #
 production:
   <<: *default
-  database: hyggerb_skeleton_production
-  username: hyggerb_skeleton
-  password: <%= ENV["HYGGERB_SKELETON_DATABASE_PASSWORD"] %>
+  database: hyggerb_production
+  username: hyggerb
+  password: <%= ENV["HYGGERB_DATABASE_PASSWORD"] %>
