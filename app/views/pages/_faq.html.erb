@@ -1,0 +1,12 @@
+<section id="faq">
+  <div class="wrap">
+    <p class="eyebrow"># quietly asked</p>
+    <h2 class="sec">Questions</h2>
+    <% EVENT["faq"].each_with_index do |item, index| %>
+      <details class="faq-item" <%= "open" if index.zero? %>>
+        <summary class="faq-q"><%= item["q"] %><span class="plus">+</span></summary>
+        <div class="faq-a"><p><%= raw item["a"] %></p></div>
+      </details>
+    <% end %>
+  </div>
+</section>

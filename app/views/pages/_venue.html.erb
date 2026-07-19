@@ -1,0 +1,25 @@
+<section id="venue">
+  <div class="wrap">
+    <p class="eyebrow"># venue · aarhus</p>
+    <h2 class="sec">By the river, second floor</h2>
+    <div class="venue-photo">
+      <%= image_tag "venue-dentsu-aarhus.png",
+            alt: "The office building on Åboulevarden in Aarhus that hosts hygge.rb",
+            loading: "lazy" %>
+    </div>
+    <p>We're on the <strong>second floor</strong>, up the stairs, of an office right on Åboulevarden, the café-lined street that runs along the old river in the heart of Aarhus. Everything is a short walk away: the cathedral, ARoS, the Latin Quarter, the harbour. The city is small enough that you won't need more than good shoes.</p>
+    <dl class="venue-meta">
+      <div>
+        <dt>Address</dt>
+        <dd><%= EVENT.dig("venue", "address") %></dd>
+      </div>
+      <div>
+        <dt>From the station</dt>
+        <dd><%= EVENT.dig("venue", "from_station") %></dd>
+      </div>
+    </dl>
+    <p class="venue-maps">
+      <a href="<%= EVENT.dig("venue", "maps_url") %>" target="_blank" rel="noopener">Open in Maps →</a>
+    </p>
+  </div>
+</section>

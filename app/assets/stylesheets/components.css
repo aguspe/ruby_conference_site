@@ -84,6 +84,7 @@ nav.top a:hover { color: var(--ruby); }
 }
 
 /* --- schedule --- */
+.sched-note { margin-bottom: 28px; }
 .sched { border-collapse: collapse; width: 100%; font-size: 17px; }
 .sched td { padding: 12px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
 .sched tr:last-child td { border-bottom: none; }
@@ -105,15 +106,17 @@ nav.top a:hover { color: var(--ruby); }
 .timeline .key .d { color: var(--ruby); }
 .timeline .key span:last-child { color: var(--ink); }
 @media (max-width: 480px) { .timeline div { grid-template-columns: 96px 1fr; gap: 10px; } }
+.cfp-actions { margin: 26px 0 8px; }
 
 /* --- venue --- */
 .venue-photo { width: 100%; height: 300px; border-radius: 10px; overflow: hidden; border: 1px solid var(--rule-2); margin-bottom: 24px; }
 .venue-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.venue-meta { font-family: "Space Grotesk", sans-serif; font-size: 15.5px; }
+.venue-meta { font-family: "Space Grotesk", sans-serif; font-size: 15.5px; margin-top: 22px; }
 .venue-meta div { display: flex; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--rule); }
 .venue-meta div:last-child { border-bottom: none; }
 .venue-meta dt { color: var(--muted); width: 130px; flex-shrink: 0; }
 .venue-meta dd { margin: 0; color: var(--ink); }
+.venue-maps { margin-top: 20px; }
 
 /* --- sponsors --- */
 .spons { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
