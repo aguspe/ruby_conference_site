@@ -1,0 +1,24 @@
+<section class="hero" id="hero">
+  <div class="wrap">
+    <div class="kicker">
+      <span class="free">Free</span>
+      <span>Sat 28 Nov 2026</span>
+      <span>·</span>
+      <span>Aarhus, Denmark</span>
+    </div>
+    <h1>hygge<span class="interp">.<b>rb</b></span></h1>
+    <p class="desc">A <b>tiny, free, one-day</b> Ruby gathering in Aarhus, Denmark. A few rooms, several talks, a long lunch, and a relaxed DJ set. <b>Everyone should get to hygge</b>, so come hygge with us.</p>
+    <div class="facts">
+      <% EVENT["facts"].each do |fact| %>
+        <div class="fact">
+          <dt><%= fact["label"] %></dt>
+          <dd><%= safe_join(fact["lines"], tag.br) %></dd>
+        </div>
+      <% end %>
+    </div>
+    <div class="btn-row">
+      <a href="#rsvp" class="btn btn-primary">RSVP, it's free <span class="arr">→</span></a>
+      <a href="#cfp" class="btn btn-ghost">Submit a talk</a>
+    </div>
+  </div>
+</section>

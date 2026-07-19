@@ -20,9 +20,9 @@
           <h5>More</h5>
           <ul>
             <li><a href="#venue">Venue</a></li>
-            <li><a href="#">Code of conduct</a></li>
-            <li><a href="mailto:hello@hyggerb.dk">hello@hyggerb.dk</a></li>
-            <li><a href="#">@hyggerb</a></li>
+            <li><a href="<%= EVENT.dig("links", "code_of_conduct") %>">Code of conduct</a></li>
+            <li><a href="mailto:<%= EVENT.dig("contact", "hello") %>"><%= EVENT.dig("contact", "hello") %></a></li>
+            <li><a href="<%= EVENT.dig("links", "social") %>">@hyggerb</a></li>
           </ul>
         </div>
       </div>
