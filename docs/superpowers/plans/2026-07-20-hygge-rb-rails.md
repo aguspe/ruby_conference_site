@@ -997,7 +997,10 @@ class SectionsTest < ActionDispatch::IntegrationTest
   end
 
   test "venue shows the photo and the address" do
-    assert_select ".venue-photo img[alt=?]", /Åboulevarden/
+    # Note: rails-dom-testing substitutes a Regexp into [attr=?] as a literal
+    # quoted string of the regex's to_s, which can never match. Use the CSS
+    # substring operator with a String instead.
+    assert_select ".venue-photo img[alt*=?]", "Åboulevarden"
     assert_select ".venue-meta dd", text: /8000 Aarhus C/
   end
 
