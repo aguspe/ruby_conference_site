@@ -62,6 +62,51 @@ class RsvpTest < ActiveSupport::TestCase
     assert_not rsvp.persisted?
     assert rsvp.errors.any?
   end
+
+  test "create! cannot overfill the room past capacity" do
+    Rsvp::CAPACITY.times do |i|
+      Rsvp.reserve(name: "Guest #{i}", email: "guest#{i}@example.com")
+    end
+    assert_equal Rsvp::CAPACITY, Rsvp.confirmed.count
+
+    assert_raises(ActiveRecord::RecordInvalid) do
+      Rsvp.create!(name: "Sneaky", email: "sneaky@example.com", waitlisted: false)
+    end
+    assert_equal Rsvp::CAPACITY, Rsvp.confirmed.count
+  end
+
+  test "a waitlisted record cannot be flipped to confirmed past capacity" do
+    Rsvp::CAPACITY.times do |i|
+      Rsvp.reserve(name: "Guest #{i}", email: "guest#{i}@example.com")
+    end
+    overflow = Rsvp.reserve(name: "Overflow", email: "overflow@example.com")
+    assert overflow.waitlisted?
+
+    assert_raises(ActiveRecord::RecordInvalid) { overflow.update!(waitlisted: false) }
+    assert overflow.reload.waitlisted?, "record should still be waitlisted"
+    assert_equal Rsvp::CAPACITY, Rsvp.confirmed.count
+  end
+
+  test "a waitlisted record can be promoted when a seat frees up" do
+    Rsvp::CAPACITY.times do |i|
+      Rsvp.reserve(name: "Guest #{i}", email: "guest#{i}@example.com")
+    end
+    overflow = Rsvp.reserve(name: "Overflow", email: "overflow@example.com")
+    Rsvp.confirmed.first.destroy!
+
+    assert overflow.update(waitlisted: false), overflow.errors.full_messages.to_sentence
+    assert_equal Rsvp::CAPACITY, Rsvp.confirmed.count
+  end
+
+  test "capacity validation does not affect waitlisted records" do
+    Rsvp::CAPACITY.times do |i|
+      Rsvp.reserve(name: "Guest #{i}", email: "guest#{i}@example.com")
+    end
+
+    extra = Rsvp.create!(name: "W", email: "w@example.com", waitlisted: true)
+    assert extra.persisted?
+    assert_equal Rsvp::CAPACITY, Rsvp.confirmed.count
+  end
 end
 
 # Genuine concurrency test: two real OS threads, each with its own DB
@@ -78,18 +123,38 @@ end
 # real contention. Running without transactional fixtures means every write
 # really commits, so the two threads genuinely contend for the same row and
 # the same Postgres advisory lock, and we manually clean up afterward.
+#
+# It also widens the race window on purpose. Local Postgres over a Unix socket
+# is fast enough that the read-decide-write window in `reserve` closes in
+# microseconds: with the bare code both threads finish before the other is
+# scheduled, and the test passes even when the advisory lock is deleted, i.e.
+# it would demonstrate the behaviour without guarding it. So the test installs
+# `Rsvp.race_window_hook` — a no-op in production — which `reserve` calls
+# between reading the seat count and saving. With a 50ms sleep in that window
+# both threads are guaranteed to read the seat count before either writes, so
+# an unserialised `reserve` reliably double-books the last seat and this test
+# reliably fails. Verified 5/5 green with the lock, 5/5 red without it.
 class RsvpConcurrencyTest < ActiveSupport::TestCase
   self.use_transactional_tests = false
 
-  teardown { Rsvp.delete_all }
+  # Wide enough to guarantee interleaving, small enough to stay cheap.
+  RACE_WINDOW = 0.05
+
+  teardown do
+    Rsvp.race_window_hook = nil
+    Rsvp.delete_all
+  end
 
   test "two simultaneous reservations for the last seat: exactly one is confirmed" do
     assert_equal 0, Rsvp.count, "expected a clean table before seeding the boundary"
 
     (Rsvp::CAPACITY - 1).times do |i|
-      Rsvp.create!(name: "Guest #{i}", email: "conc-guest#{i}@example.com", waitlisted: false)
+      Rsvp.reserve(name: "Guest #{i}", email: "conc-guest#{i}@example.com")
     end
     assert_equal 1, Rsvp.seats_left, "boundary setup should leave exactly one seat"
+
+    # Widen the race window only for the two racers, not the 39 seeding writes.
+    Rsvp.race_window_hook = -> { sleep RACE_WINDOW }
 
     barrier = Concurrent::CyclicBarrier.new(2)
     results = Concurrent::Array.new
