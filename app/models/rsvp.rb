@@ -1,6 +1,22 @@
 class Rsvp < ApplicationRecord
   CAPACITY = EVENT["capacity"]
 
+  # The seat cap bounds confirmed seats but says nothing about rows. Without a
+  # second bound the waitlist grows without limit, and since every accepted row
+  # sends two emails (attendee + organiser), unbounded rows means unbounded mail
+  # to caller-supplied addresses from the conference's own sending domain.
+  #
+  # Half the room is a deliberately generous ceiling: for a free ~40-seat event,
+  # 20 people waiting is already more than any realistic run of cancellations
+  # could ever absorb, so the bound cannot plausibly turn away someone who would
+  # have got a seat. It caps total rows at 60 and total mail at 120.
+  WAITLIST_CAPACITY = CAPACITY / 2
+
+  # Raised as a base error on the unpersisted record `reserve` returns when the
+  # waitlist is full. The controller keys its "waitlist is full" response off
+  # this, so it lives here rather than being matched by string in two places.
+  WAITLIST_FULL_ERROR = "the waitlist is full; we can't take any more names"
+
   normalizes :email, with: ->(email) { email.to_s.strip.downcase }
   normalizes :name,  with: ->(name) { name.to_s.strip }
 
@@ -26,6 +42,14 @@ class Rsvp < ApplicationRecord
   def self.seats_left  = [CAPACITY - seats_taken, 0].max
   def self.full?       = seats_left.zero?
 
+  def self.waitlist_taken = waitlisted.count
+  def self.waitlist_full? = waitlist_taken >= WAITLIST_CAPACITY
+
+  # True for the unpersisted record `reserve` returns when it refused to add
+  # another name to a full waitlist — as opposed to an ordinary validation
+  # failure, which must still render the form with its errors.
+  def waitlist_rejected? = errors[:base].include?(WAITLIST_FULL_ERROR)
+
   # Creates a reservation, deciding confirmed-vs-waitlisted under a lock so two
   # simultaneous submissions can't both claim the last seat.
   #
@@ -45,7 +69,16 @@ class Rsvp < ApplicationRecord
       connection.execute("SELECT pg_advisory_xact_lock(#{LOCK_KEY})")
       rsvp.waitlisted = full?
       race_window_hook&.call
-      rsvp.save
+
+      # Checked under the same lock as the seat decision, so two simultaneous
+      # submissions can't both claim the last waitlist place. `valid?` has
+      # already passed above, so this is the only error the record can carry —
+      # which is what lets `waitlist_rejected?` be an unambiguous predicate.
+      if rsvp.waitlisted? && waitlist_full?
+        rsvp.errors.add(:base, WAITLIST_FULL_ERROR)
+      else
+        rsvp.save
+      end
     end
 
     rsvp

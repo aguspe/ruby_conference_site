@@ -4,6 +4,28 @@ class RsvpsControllerTest < ActionDispatch::IntegrationTest
   # Text unique to each partial, so a test can't pass on the other one's body.
   CONFIRMED_TEXT = "Your seat is reserved"
   WAITLIST_TEXT  = "you're on the waitlist"
+  WAITLIST_FULL_TEXT = "can't add your name today"
+
+  # The organiser address the mailer resolves is env-dependent, and a test that
+  # re-reads the same env var the implementation reads would pass by
+  # construction. These tests pin a literal instead and set the var to match.
+  ORGANISER = "organiser@example.test"
+
+  def with_organiser_email(address)
+    original = ENV["ORGANISER_EMAIL"]
+    ENV["ORGANISER_EMAIL"] = address
+    yield
+  ensure
+    original.nil? ? ENV.delete("ORGANISER_EMAIL") : ENV["ORGANISER_EMAIL"] = original
+  end
+
+  def fill_room
+    Rsvp::CAPACITY.times { |i| Rsvp.reserve(name: "Seat #{i}", email: "seat#{i}@example.com") }
+  end
+
+  def fill_waitlist(count)
+    count.times { |i| Rsvp.reserve(name: "Wait #{i}", email: "wait#{i}@example.com") }
+  end
 
   def verifier
     ActiveSupport::MessageVerifier.new(
@@ -90,6 +112,61 @@ class RsvpsControllerTest < ActionDispatch::IntegrationTest
     assert Rsvp.last.waitlisted?
     assert_match WAITLIST_TEXT, response.body
     assert_no_match CONFIRMED_TEXT, response.body
+  end
+
+  # --- the waitlist bound ---
+
+  test "the last place on the waitlist is accepted, and mails" do
+    fill_room
+    fill_waitlist(Rsvp::WAITLIST_CAPACITY - 1)
+
+    assert_enqueued_emails 2 do
+      assert_difference "Rsvp.count", 1 do
+        post rsvps_path, params: params
+      end
+    end
+    assert_response :success
+    assert_rsvp_frame
+    assert_match WAITLIST_TEXT, response.body
+    assert Rsvp.last.waitlisted?
+    assert_equal Rsvp::WAITLIST_CAPACITY, Rsvp.waitlist_taken
+  end
+
+  test "an rsvp past the waitlist bound is rejected, persisting nothing and mailing nothing" do
+    fill_room
+    fill_waitlist(Rsvp::WAITLIST_CAPACITY)
+
+    assert_no_enqueued_emails do
+      assert_no_difference "Rsvp.count" do
+        post rsvps_path, params: params
+      end
+    end
+    assert_response :unprocessable_entity
+    assert_rsvp_frame
+    assert_match WAITLIST_FULL_TEXT, response.body
+    assert_no_match CONFIRMED_TEXT, response.body
+    assert_no_match WAITLIST_TEXT, response.body
+    assert_not Rsvp.exists?(email: "ada@example.com")
+  end
+
+  # The abuse probe from the review, as a regression test: with the room full,
+  # a caller hammering the endpoint with fresh addresses must stop adding rows
+  # and stop generating mail once the waitlist bound is reached.
+  test "rows and mail both stop growing once the waitlist is full" do
+    fill_room
+    fill_waitlist(Rsvp::WAITLIST_CAPACITY)
+    ceiling = Rsvp.count
+
+    assert_no_enqueued_emails do
+      assert_no_difference "Rsvp.count" do
+        10.times do |i|
+          post rsvps_path, params: params(rsvp: { name: "Abuse", email: "abuse#{i}@example.com" })
+          assert_response :unprocessable_entity
+        end
+      end
+    end
+    assert_equal ceiling, Rsvp.count
+    assert_equal Rsvp::CAPACITY + Rsvp::WAITLIST_CAPACITY, ceiling
   end
 
   test "the landing page renders the rsvp form" do
@@ -271,9 +348,29 @@ class RsvpsControllerTest < ActionDispatch::IntegrationTest
 
   # --- email delivery ---
 
-  test "a valid rsvp enqueues both emails" do
-    assert_enqueued_emails 2 do
-      post rsvps_path, params: params
+  # A bare `assert_enqueued_emails 2` pins only a count, so a controller that
+  # sent `confirmation` twice — never notifying the organiser, and double-mailing
+  # the attendee — would keep the suite green. This asserts identity: which
+  # mailer went to which address, with which subject.
+  test "a valid rsvp mails the attendee a confirmation and the organiser a notification" do
+    with_organiser_email(ORGANISER) do
+      ActionMailer::Base.deliveries.clear
+
+      perform_enqueued_jobs do
+        post rsvps_path, params: params
+      end
+
+      deliveries = ActionMailer::Base.deliveries
+      assert_equal 2, deliveries.size, "expected exactly one attendee mail and one organiser mail"
+      assert_equal [ [ "ada@example.com" ], [ ORGANISER ] ], deliveries.map(&:to).sort_by(&:first)
+
+      attendee = deliveries.find { |mail| mail.to == [ "ada@example.com" ] }
+      organiser = deliveries.find { |mail| mail.to == [ ORGANISER ] }
+
+      assert attendee, "no mail was addressed to the submitted attendee address"
+      assert organiser, "no mail was addressed to the organiser address"
+      assert_equal "Your seat at hygge.rb is reserved", attendee.subject
+      assert_equal "New hygge.rb RSVP: Ada", organiser.subject
     end
   end
 

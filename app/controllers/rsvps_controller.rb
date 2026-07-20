@@ -29,6 +29,10 @@ class RsvpsController < ApplicationController
     if @rsvp.persisted?
       deliver_emails(@rsvp)
       @rsvp.waitlisted? ? render_full : render_confirmation
+    elsif @rsvp.waitlist_rejected?
+      # Nothing was persisted and no mail is sent: this is the bound that stops
+      # an anonymous caller turning the endpoint into a mail cannon.
+      render_waitlist_full
     else
       render_in_frame "rsvps/form", locals: { rsvp: @rsvp },
                       status: :unprocessable_entity
@@ -101,6 +105,10 @@ class RsvpsController < ApplicationController
 
   def render_full
     render_in_frame "rsvps/full"
+  end
+
+  def render_waitlist_full
+    render_in_frame "rsvps/waitlist_full", status: :unprocessable_entity
   end
 
   def render_in_frame(partial, locals: {}, **options)
