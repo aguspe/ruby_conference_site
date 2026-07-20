@@ -1,0 +1,26 @@
+.admin-wrap { max-width: 940px; }
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 15px;
+  margin-top: 24px;
+}
+.admin-table th {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: left;
+  font-weight: 400;
+  padding: 0 12px 10px 0;
+  border-bottom: 1px solid var(--rule-2);
+}
+.admin-table td {
+  padding: 11px 12px 11px 0;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+  color: var(--ink);
+}

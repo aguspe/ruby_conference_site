@@ -13,4 +13,8 @@ Rails.application.routes.draw do
   root "pages#home"
 
   resources :rsvps, only: [ :create ]
+
+  namespace :admin do
+    resources :rsvps, only: [ :index ]
+  end
 end
