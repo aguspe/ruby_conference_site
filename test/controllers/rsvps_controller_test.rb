@@ -175,6 +175,29 @@ class RsvpsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  # Every other replay test mints its own token via `timestamp_for`, supplying
+  # `expires_in` itself — which only proves MessageVerifier honours the
+  # option, not that `rsvp_form_timestamp` (the sole production generator)
+  # actually passes it. This test uses the token the app itself renders, so
+  # deleting `expires_in:` from `rsvp_form_timestamp` cannot leave the suite
+  # green.
+  test "the page's own rendered token cannot be replayed past the expiry window" do
+    get root_path
+    assert_response :success
+    token = css_select("input[name='t']").first&.[]("value")
+    assert token.present?, "could not find the rendered t token on the landing page"
+
+    expected = genuine_success_body
+
+    travel 31.minutes do
+      assert_no_difference "Rsvp.count" do
+        post rsvps_path, params: params(t: token)
+      end
+      assert_response :success
+      assert_equal expected, response.body
+    end
+  end
+
   test "a malformed rsvp param is indistinguishable from success and never raises" do
     expected = genuine_success_body
 
