@@ -1,0 +1,22 @@
+Hi <%= @rsvp.name %>,
+
+<% if @rsvp.waitlisted? -%>
+hygge.rb is full, so you're on the waitlist. People's plans change more often
+than you'd think, and we'll email you the moment a seat opens up.
+<% else -%>
+Your seat at hygge.rb is reserved. Tak!
+<% end -%>
+
+  Saturday 28 November 2026, 10:00 - 19:00
+  <%= EVENT.dig("venue", "address") %>
+
+Talks, a long lunch, afternoon coffee, and an evening DJ set. Free, thanks to
+our sponsors. Just bring yourself.
+
+<% unless @rsvp.waitlisted? -%>
+We only have <%= Rsvp::CAPACITY %> seats. If your plans change, reply to this
+email and we'll pass your seat to someone on the waitlist.
+<% end -%>
+
+See you by the river,
+hygge.rb

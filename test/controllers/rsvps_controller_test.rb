@@ -53,8 +53,10 @@ class RsvpsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "an invalid rsvp re-renders the form with errors and stores nothing" do
-    assert_no_difference "Rsvp.count" do
-      post rsvps_path, params: params(rsvp: { email: "nope" })
+    assert_no_enqueued_emails do
+      assert_no_difference "Rsvp.count" do
+        post rsvps_path, params: params(rsvp: { email: "nope" })
+      end
     end
     assert_response :unprocessable_entity
     assert_rsvp_frame
@@ -67,8 +69,10 @@ class RsvpsControllerTest < ActionDispatch::IntegrationTest
     # At a full house `reserve` sets waitlisted = true provisionally, so a
     # controller that checked `waitlisted?` before `persisted?` would answer a
     # never-saved record with a waitlist confirmation.
-    assert_no_difference "Rsvp.count" do
-      post rsvps_path, params: params(rsvp: { email: "nope" })
+    assert_no_enqueued_emails do
+      assert_no_difference "Rsvp.count" do
+        post rsvps_path, params: params(rsvp: { email: "nope" })
+      end
     end
     assert_response :unprocessable_entity
     assert_rsvp_frame
@@ -117,8 +121,10 @@ class RsvpsControllerTest < ActionDispatch::IntegrationTest
   test "a filled honeypot is silently discarded" do
     expected = genuine_success_body
 
-    assert_no_difference "Rsvp.count" do
-      post rsvps_path, params: params(company: "Spam Co")
+    assert_no_enqueued_emails do
+      assert_no_difference "Rsvp.count" do
+        post rsvps_path, params: params(company: "Spam Co")
+      end
     end
     assert_response :success
     assert_equal expected, response.body
@@ -127,8 +133,10 @@ class RsvpsControllerTest < ActionDispatch::IntegrationTest
   test "a submission faster than the dwell threshold is discarded" do
     expected = genuine_success_body
 
-    assert_no_difference "Rsvp.count" do
-      post rsvps_path, params: params(t: timestamp_for(Time.current))
+    assert_no_enqueued_emails do
+      assert_no_difference "Rsvp.count" do
+        post rsvps_path, params: params(t: timestamp_for(Time.current))
+      end
     end
     assert_response :success
     assert_equal expected, response.body
@@ -137,8 +145,10 @@ class RsvpsControllerTest < ActionDispatch::IntegrationTest
   test "a tampered timestamp is discarded" do
     expected = genuine_success_body
 
-    assert_no_difference "Rsvp.count" do
-      post rsvps_path, params: params(t: "forged")
+    assert_no_enqueued_emails do
+      assert_no_difference "Rsvp.count" do
+        post rsvps_path, params: params(t: "forged")
+      end
     end
     assert_response :success
     assert_equal expected, response.body
@@ -149,8 +159,10 @@ class RsvpsControllerTest < ActionDispatch::IntegrationTest
     stale = timestamp_for(Time.current, expires_in: 1.second)
 
     travel 2.seconds do
-      assert_no_difference "Rsvp.count" do
-        post rsvps_path, params: params(t: stale)
+      assert_no_enqueued_emails do
+        assert_no_difference "Rsvp.count" do
+          post rsvps_path, params: params(t: stale)
+        end
       end
     end
     assert_response :success
@@ -166,10 +178,12 @@ class RsvpsControllerTest < ActionDispatch::IntegrationTest
     end
 
     travel(RsvpsHelper::MAX_DWELL + 1.minute) do
-      assert_no_difference "Rsvp.count" do
-        20.times do |i|
-          post rsvps_path, params: params(t: captured, rsvp: { email: "replay#{i}@example.com" })
-          assert_response :success
+      assert_no_enqueued_emails do
+        assert_no_difference "Rsvp.count" do
+          20.times do |i|
+            post rsvps_path, params: params(t: captured, rsvp: { email: "replay#{i}@example.com" })
+            assert_response :success
+          end
         end
       end
     end
@@ -190,8 +204,10 @@ class RsvpsControllerTest < ActionDispatch::IntegrationTest
     expected = genuine_success_body
 
     travel 31.minutes do
-      assert_no_difference "Rsvp.count" do
-        post rsvps_path, params: params(t: token)
+      assert_no_enqueued_emails do
+        assert_no_difference "Rsvp.count" do
+          post rsvps_path, params: params(t: token)
+        end
       end
       assert_response :success
       assert_equal expected, response.body
@@ -211,8 +227,10 @@ class RsvpsControllerTest < ActionDispatch::IntegrationTest
 
     hostile.each do |shape|
       base = { company: "", t: valid_timestamp }
-      assert_no_difference "Rsvp.count", "shape #{shape.inspect} persisted a row" do
-        post rsvps_path, params: base.merge(shape)
+      assert_no_enqueued_emails do
+        assert_no_difference "Rsvp.count", "shape #{shape.inspect} persisted a row" do
+          post rsvps_path, params: base.merge(shape)
+        end
       end
       assert_response :success, "shape #{shape.inspect} did not return 200"
       assert_equal expected, response.body,
@@ -236,16 +254,67 @@ class RsvpsControllerTest < ActionDispatch::IntegrationTest
         end
       end
 
-      assert_no_difference "Rsvp.count" do
-        3.times do |i|
-          post rsvps_path, params: params(rsvp: { email: "blocked#{i}@example.com" })
-          assert_response :success
-          assert_equal expected, response.body,
-            "a rate-limited response must be byte-identical to a success"
+      assert_no_enqueued_emails do
+        assert_no_difference "Rsvp.count" do
+          3.times do |i|
+            post rsvps_path, params: params(rsvp: { email: "blocked#{i}@example.com" })
+            assert_response :success
+            assert_equal expected, response.body,
+              "a rate-limited response must be byte-identical to a success"
+          end
         end
       end
     ensure
       Rails.cache = original
+    end
+  end
+
+  # --- email delivery ---
+
+  test "a valid rsvp enqueues both emails" do
+    assert_enqueued_emails 2 do
+      post rsvps_path, params: params
+    end
+  end
+
+  test "a rejected rsvp sends nothing" do
+    assert_no_enqueued_emails do
+      post rsvps_path, params: params(rsvp: { email: "nope" })
+      post rsvps_path, params: params(company: "Spam Co")
+    end
+  end
+
+  # Emails are `deliver_later`, so the mailer body never runs during the
+  # request — only the job that's enqueued for later does. That's what makes
+  # a mail outage powerless to unwind a reservation or fail the response: by
+  # the time anything could raise, `Rsvp.reserve` has already committed and
+  # the controller has already rendered. This test proves both halves: the
+  # request succeeds and the row survives even with a broken mailer, and the
+  # mailer really is broken — running its enqueued job separately, outside
+  # the request/response cycle, does raise.
+  test "a mailer raising does not roll back the reservation or fail the request" do
+    RsvpMailer.class_eval do
+      alias_method :original_confirmation, :confirmation
+      define_method(:confirmation) { |*| raise "SMTP is on fire" }
+    end
+
+    begin
+      assert_difference "Rsvp.count", 1 do
+        post rsvps_path, params: params
+      end
+      assert_response :success
+      assert_rsvp_frame
+      assert_match CONFIRMED_TEXT, response.body
+      assert Rsvp.exists?(email: "ada@example.com"),
+        "the reservation must survive a mail failure"
+
+      assert_raises(RuntimeError) { perform_enqueued_jobs }
+    ensure
+      RsvpMailer.class_eval do
+        remove_method :confirmation
+        alias_method :confirmation, :original_confirmation
+        remove_method :original_confirmation
+      end
     end
   end
 end

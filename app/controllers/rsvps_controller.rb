@@ -27,6 +27,7 @@ class RsvpsController < ApplicationController
     # invalid record still carries `waitlisted == true` from the model's
     # provisional flag, and must render the form-with-errors path.
     if @rsvp.persisted?
+      deliver_emails(@rsvp)
       @rsvp.waitlisted? ? render_full : render_confirmation
     else
       render_in_frame "rsvps/form", locals: { rsvp: @rsvp },
@@ -35,6 +36,14 @@ class RsvpsController < ApplicationController
   end
 
   private
+
+  # deliver_later so a mail outage can never fail a reservation. The record
+  # is already saved by the time this runs, so a mailer raising here must
+  # never roll back or otherwise threaten the reservation.
+  def deliver_emails(rsvp)
+    RsvpMailer.confirmation(rsvp).deliver_later
+    RsvpMailer.notification(rsvp).deliver_later
+  end
 
   # Only ever called once `bot?` has confirmed `params[:rsvp]` is a hash, so
   # this can never raise ParameterMissing on a public endpoint.
