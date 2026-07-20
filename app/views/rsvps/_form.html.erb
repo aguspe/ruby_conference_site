@@ -1,0 +1,35 @@
+<%= form_with model: rsvp, url: rsvps_path, class: "rsvp-form",
+              data: { turbo_frame: "rsvp_form" } do |f| %>
+
+  <div class="visually-hidden" aria-hidden="true">
+    <label for="company">Company (leave this empty)</label>
+    <input type="text" name="company" id="company" tabindex="-1" autocomplete="off">
+  </div>
+  <input type="hidden" name="t" value="<%= rsvp_form_timestamp %>">
+
+  <% if rsvp.errors[:name].any? %>
+    <p class="field-error"><%= rsvp.errors[:name].first %></p>
+  <% end %>
+  <%= f.text_field :name,
+        placeholder: "Your name",
+        "aria-label": "Your name",
+        "aria-invalid": rsvp.errors[:name].any?.to_s,
+        required: true,
+        autofocus: rsvp.errors[:name].any? %>
+
+  <% if rsvp.errors[:email].any? %>
+    <p class="field-error"><%= rsvp.errors[:email].first %></p>
+  <% end %>
+  <%= f.email_field :email,
+        placeholder: "you@example.com",
+        "aria-label": "Email address",
+        "aria-invalid": rsvp.errors[:email].any?.to_s,
+        required: true,
+        autofocus: rsvp.errors[:name].empty? && rsvp.errors[:email].any? %>
+
+  <%= f.text_field :dietary,
+        placeholder: "Dietary needs or allergies (optional)",
+        "aria-label": "Dietary needs or allergies" %>
+
+  <button type="submit" class="btn btn-primary">Reserve my seat <span class="arr">→</span></button>
+<% end %>
