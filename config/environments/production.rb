@@ -27,6 +27,11 @@ Rails.application.configure do
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   config.force_ssl = true
 
+  # Backs the RSVP form's `rate_limit` (see RsvpsController). Per-process, so
+  # this is only correct on a single instance, which is what this service is.
+  # If the service is ever scaled to two instances, move to Redis.
+  config.cache_store = :memory_store
+
   # Skip http-to-https redirect for the default health check endpoint.
   # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
 
@@ -46,24 +51,34 @@ Rails.application.configure do
   # Replace the default in-process memory cache store with a durable alternative.
   # config.cache_store = :mem_cache_store
 
-  # Replace the default in-process and non-durable queuing backend for Active Job.
+  # RsvpMailer is delivered inline with `deliver_now` (see RsvpsController),
+  # not `deliver_later`, so Active Job's queue adapter is irrelevant to mail
+  # durability here: at ~40 seats, the default in-process AsyncAdapter's
+  # non-persistence (anything queued is lost on every deploy restart) is a
+  # real risk for a job queue, but not for something that never gets queued.
   # config.active_job.queue_adapter = :resque
 
-  # Ignore bad email addresses and do not raise email delivery errors.
-  # Set this to true and configure the email server for immediate delivery to raise delivery errors.
-  # config.action_mailer.raise_delivery_errors = false
+  # `true` so a transport failure raises out of `deliver_now` instead of being
+  # swallowed inside ActionMailer. RsvpsController rescues that raise itself,
+  # logs it, and continues — the reservation is already saved by the time
+  # mail is attempted, so a mail failure still can never fail the request.
+  # Raising here (rather than swallowing) is what makes the failure visible
+  # in the logs instead of silently disappearing.
+  config.action_mailer.raise_delivery_errors = true
+
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.smtp_settings = {
+    address:              "smtp.resend.com",
+    port:                 587,
+    user_name:            "resend",
+    password:             ENV["RESEND_API_KEY"],
+    authentication:       :plain,
+    enable_starttls_auto: true
+  }
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "example.com" }
-
-  # Specify outgoing SMTP server. Remember to add smtp/* credentials via bin/rails credentials:edit.
-  # config.action_mailer.smtp_settings = {
-  #   user_name: Rails.application.credentials.dig(:smtp, :user_name),
-  #   password: Rails.application.credentials.dig(:smtp, :password),
-  #   address: "smtp.example.com",
-  #   port: 587,
-  #   authentication: :plain
-  # }
+  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "hyggerb.dk"), protocol: "https" }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).

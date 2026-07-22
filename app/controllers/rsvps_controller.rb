@@ -41,12 +41,27 @@ class RsvpsController < ApplicationController
 
   private
 
-  # deliver_later so a mail outage can never fail a reservation. The record
-  # is already saved by the time this runs, so a mailer raising here must
-  # never roll back or otherwise threaten the reservation.
+  # Delivered inline with `deliver_now`, not `deliver_later`: at ~40 seats
+  # this doesn't warrant a durable job queue, and Active Job's default
+  # AsyncAdapter is in-process and non-persistent — anything still queued is
+  # lost the moment the single Render instance restarts, which happens on
+  # every deploy. Sending inline means there is never anything queued to
+  # lose. Each mail is wrapped in its own rescue, so one failing (or the
+  # confirmation raising) can never block the other, and neither can ever
+  # roll back or fail this request: the reservation is already saved by the
+  # time this runs.
   def deliver_emails(rsvp)
-    RsvpMailer.confirmation(rsvp).deliver_later
-    RsvpMailer.notification(rsvp).deliver_later
+    safe_deliver { RsvpMailer.confirmation(rsvp).deliver_now }
+    safe_deliver { RsvpMailer.notification(rsvp).deliver_now }
+  end
+
+  # Catches and logs a mail failure rather than letting it propagate. Logging
+  # (rather than swallowing outright) is what keeps a real delivery outage
+  # visible in production instead of indistinguishable from success.
+  def safe_deliver
+    yield
+  rescue StandardError => e
+    logger.error("[rsvp mailer] delivery failed: #{e.class}: #{e.message}")
   end
 
   # Only ever called once `bot?` has confirmed `params[:rsvp]` is a hash, so
