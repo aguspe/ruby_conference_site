@@ -39,7 +39,7 @@ class Rsvp < ApplicationRecord
   class_attribute :race_window_hook, instance_accessor: false, default: nil
 
   def self.seats_taken = confirmed.count
-  def self.seats_left  = [CAPACITY - seats_taken, 0].max
+  def self.seats_left  = [ CAPACITY - seats_taken, 0 ].max
   def self.full?       = seats_left.zero?
 
   def self.waitlist_taken = waitlisted.count
