@@ -20,7 +20,8 @@
   <% if rsvp.errors[:email].any? %>
     <p class="field-error"><%= rsvp.errors[:email].first %></p>
   <% end %>
-  <%= f.email_field :email,
+  <%= f.text_field :email,
+        inputmode: "email",
         placeholder: "you@example.com",
         "aria-label": "Email address",
         "aria-invalid": rsvp.errors[:email].any?.to_s,
