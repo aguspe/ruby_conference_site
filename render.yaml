@@ -26,8 +26,11 @@ services:
         value: "true"
       - key: RAILS_LOG_TO_STDOUT
         value: "true"
-      - key: WEB_CONCURRENCY
-        value: "2"
+      # Puma runs single-process on purpose: config.cache_store = :memory_store
+      # backs the RSVP rate_limit, which is per-process. Do NOT add a `workers`
+      # directive to config/puma.rb (or set WEB_CONCURRENCY) without first moving
+      # the rate-limit counter to a shared store (e.g. Redis) — otherwise the
+      # 5/min limit silently becomes 5×workers.
       - key: APP_HOST
         value: hyggerb.dk
       - key: ORGANISER_EMAIL
