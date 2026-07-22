@@ -1,0 +1,109 @@
+capacity: 40
+
+facts:
+  - label: "When"
+    lines: ["Sat 28 Nov 2026", "10:00 – 19:00"]
+  - label: "Where"
+    lines: ["Åboulevarden 18, 2.", "Aarhus C"]
+  - label: "Cost"
+    lines: ["Free · RSVP", "~40 seats"]
+
+sponsors:
+  - tier: "Host"
+    name: "Merkle"
+  - tier: "Headline"
+    name: "Dentsu"
+
+schedule:
+  - time: "10:00"
+    event: "Doors & filter coffee"
+    sub: "Åboulevarden 18, 2nd floor"
+  - time: "10:30"
+    event: "Opening remarks"
+  - time: "10:45"
+    event: "Three talks · morning block"
+    sub: "45 minutes each, with breaks"
+  - time: "12:30"
+    event: "Long lunch"
+    sub: "one hour, unrushed"
+  - time: "13:30"
+    event: "Lightning talks"
+    sub: "5 minutes each, sign up at lunch"
+  - time: "14:00"
+    event: "Three talks · afternoon"
+  - time: "16:00"
+    event: "Coffee break"
+  - time: "16:30"
+    event: "Two talks · closing block"
+  - time: "17:45"
+    event: "Closing remarks & dørstop drinks"
+  - time: "18:00"
+    event: "DJ set, dancing, talking, both"
+    sub: "main room, lights down, no rush"
+    dj: true
+  - time: "19:00"
+    event: "Last call"
+    sub: "we close at seven on the dot"
+
+cfp_criteria:
+  - numeral: "i."
+    title: "A specific story."
+    body: "Not a survey, not a tour. The bug you chased for nine months. The library you wish existed."
+  - numeral: "ii."
+    title: "Ruby, somewhere in it."
+    body: "The talk needn't be <em class=\"i\">about</em> Ruby, but Ruby should be in the room. Non-technical talks welcome too."
+  - numeral: "iii."
+    title: "A point of view."
+    body: "An opinion, an argument, a thing you've changed your mind about. Take a stance."
+  - numeral: "iv."
+    title: "About 45 minutes."
+    body: "Long enough to be honest, questions and a graceful exit included."
+
+cfp_timeline:
+  - date: "Wed 5 Aug"
+    text: "CFP opens."
+    key: true
+  - date: "Weeks 1–2"
+    text: "First wave of submissions, the eager beavers."
+  - date: "Mid Aug"
+    text: "A quieter stretch; we're out promoting."
+  - date: "Early Sep"
+    text: "“Two weeks left” reminders; submissions accelerate."
+  - date: "Sat 5 Sep"
+    text: "CFP closes. The last week is, predictably, the busiest."
+    key: true
+  - date: "Sep"
+    text: "Selection committee reviews; acceptances confirmed."
+  - date: "Sat 26 Sep"
+    text: "Public lineup announcement."
+    key: true
+
+faq:
+  - q: "Is it really free?"
+    a: "Yes, free to attend, thanks to our sponsors. You just need to RSVP, because space is capped at around 40. If you register and can't make it, please release your seat so someone else can take it."
+  - q: "Will talks be recorded?"
+    a: "Yes, every talk is recorded and published for free on YouTube about two weeks after. There's no livestream, though, the room is for the people in the room."
+  - q: "I'm new to Ruby. Should I come?"
+    a: "All levels are welcome. Talks aim for substance over jargon, and there's plenty of time to meet people over lunch and coffee."
+  - q: "What about food and allergies?"
+    a: "Lunch and coffee are included. Every meal has a clearly-labelled vegetarian and vegan option, and we ask about allergies in the RSVP form so the kitchen can accommodate them individually."
+  - q: "I'd like to speak, what's the deadline?"
+    a: "The CFP closes 5 September 2026 at 23:59 CET. Talks are around 45 minutes including questions. We accept several, and the public lineup is announced 26 September. <a href=\"#cfp\">Submit a proposal.</a>"
+  - q: "Can my company sponsor?"
+    a: "We'd love that, sponsors are what keep the day free. Email <a href=\"mailto:sponsor@hyggerb.dk\">sponsor@hyggerb.dk</a> for the prospectus."
+
+venue:
+  address: "Åboulevarden 18, 2. sal · 8000 Aarhus C, Denmark"
+  from_station: "8 minutes on foot"
+  maps_url: "https://maps.apple.com/?address=Åboulevarden%2018,%208000%20Aarhus,%20Denmark&q=hygge.rb"
+
+contact:
+  hello: "hello@hyggerb.dk"
+  sponsor: "sponsor@hyggerb.dk"
+
+links:
+  cfp_submit: "#"
+  cfp_guidelines: "#"
+  become_sponsor: "#"
+  code_of_conduct: "#"
+  social: "#"

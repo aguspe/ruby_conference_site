@@ -1,0 +1,8 @@
+New RSVP.
+
+  Name:     <%= @rsvp.name %>
+  Email:    <%= @rsvp.email %>
+  Dietary:  <%= @rsvp.dietary.presence || "none given" %>
+  Status:   <%= @rsvp.waitlisted? ? "WAITLISTED" : "confirmed" %>
+
+Seats taken: <%= @seats_taken %> of <%= Rsvp::CAPACITY %>.

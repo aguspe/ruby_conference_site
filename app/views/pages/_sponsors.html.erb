@@ -1,0 +1,18 @@
+<section id="sponsors">
+  <div class="wrap">
+    <p class="eyebrow"># made possible by</p>
+    <h2 class="sec">Our friends</h2>
+    <p>hygge.rb is free because a few good companies pick up the tab. We keep the list short and the booths nonexistent, just a thank-you and a logo.</p>
+    <div class="spons">
+      <% EVENT["sponsors"].each do |sponsor| %>
+        <div class="spon">
+          <div class="tier"><%= sponsor["tier"] %></div>
+          <div class="name"><%= sponsor["name"] %></div>
+        </div>
+      <% end %>
+      <div class="spon cta">
+        <a href="<%= EVENT.dig("links", "become_sponsor") %>">Become a sponsor →</a>
+      </div>
+    </div>
+  </div>
+</section>

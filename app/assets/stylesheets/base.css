@@ -1,0 +1,75 @@
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Newsreader", Georgia, serif;
+  font-size: 19px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.sans { font-family: "Space Grotesk", system-ui, sans-serif; }
+.mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+
+a {
+  color: var(--ruby);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+a:hover { color: var(--ruby-deep); }
+
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+
+section { padding: 64px 0; border-top: 1px solid var(--rule); }
+section:first-of-type { border-top: none; }
+
+.eyebrow {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
+  color: var(--ruby);
+  text-transform: lowercase;
+  margin: 0 0 18px;
+}
+
+h2.sec {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 600;
+  font-size: 30px;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0 0 20px;
+  color: var(--ink);
+}
+
+p { margin: 0 0 18px; }
+p:last-child { margin-bottom: 0; }
+
+.lead { font-size: 21px; color: var(--ink-soft); }
+strong { font-weight: 600; color: var(--ink); }
+em.i { font-style: italic; }
+
+::selection { background: var(--ruby); color: #fff; }
+
+/* Screen-reader-only, used by the honeypot field and skip link */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; }
+}

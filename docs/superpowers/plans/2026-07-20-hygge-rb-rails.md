@@ -455,7 +455,7 @@ Three deliberate changes from the handoff, and only these three:
 Every colour in the file must be a `var(--…)`, `#fff`, or the `#d44653` highlight used inside the coffee-cup SVG (which lives in markup, not CSS).
 
 Run: `grep -nE '#[0-9a-fA-F]{3,6}' app/assets/stylesheets/components.css`
-Expected: only `#fff` occurrences (in `.btn-primary`, `.btn-primary:hover`). Any other hex is a bug — replace it with the matching token.
+Expected: only `#fff` occurrences — three of them, in `.hero .kicker .free`, `.btn-primary`, and `.btn-primary:hover`. Any other hex is a bug — replace it with the matching token.
 
 - [ ] **Step 3: Commit**
 
@@ -997,7 +997,10 @@ class SectionsTest < ActionDispatch::IntegrationTest
   end
 
   test "venue shows the photo and the address" do
-    assert_select ".venue-photo img[alt=?]", /Åboulevarden/
+    # Note: rails-dom-testing substitutes a Regexp into [attr=?] as a literal
+    # quoted string of the regex's to_s, which can never match. Use the CSS
+    # substring operator with a String instead.
+    assert_select ".venue-photo img[alt*=?]", "Åboulevarden"
     assert_select ".venue-meta dd", text: /8000 Aarhus C/
   end
 

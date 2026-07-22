@@ -1,0 +1,77 @@
+/* Space Grotesk — headings, wordmark, UI, buttons, labels */
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("space-grotesk-400-normal-latin-ext.woff2") format("woff2"),
+       url("space-grotesk-400-normal-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("space-grotesk-500-normal-latin-ext.woff2") format("woff2"),
+       url("space-grotesk-500-normal-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("space-grotesk-600-normal-latin-ext.woff2") format("woff2"),
+       url("space-grotesk-600-normal-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("space-grotesk-700-normal-latin-ext.woff2") format("woff2"),
+       url("space-grotesk-700-normal-latin.woff2") format("woff2");
+}
+
+/* Newsreader — body prose, hero description, schedule events */
+@font-face {
+  font-family: "Newsreader";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("newsreader-400-normal-latin-ext.woff2") format("woff2"),
+       url("newsreader-400-normal-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Newsreader";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("newsreader-500-normal-latin-ext.woff2") format("woff2"),
+       url("newsreader-500-normal-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Newsreader";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("newsreader-400-italic-latin-ext.woff2") format("woff2"),
+       url("newsreader-400-italic-latin.woff2") format("woff2");
+}
+
+/* JetBrains Mono — eyebrows, kickers, dates, table times, meta */
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("jetbrains-mono-400-normal-latin-ext.woff2") format("woff2"),
+       url("jetbrains-mono-400-normal-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("jetbrains-mono-500-normal-latin-ext.woff2") format("woff2"),
+       url("jetbrains-mono-500-normal-latin.woff2") format("woff2");
+}

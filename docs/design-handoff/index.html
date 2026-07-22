@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>hygge.rb, a tiny free Ruby day in Aarhus, November 2026</title>
+  <meta name="description" content="A tiny, free, one-day Ruby gathering in Aarhus, Denmark. Saturday 28 November 2026. RSVP required." />
+
+  <template id="__bundler_thumbnail" data-bg-color="#f7f1e7">
+    <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+      <path d="M520 220 C490 280 550 310 520 370" stroke="#b9202b" stroke-width="14" stroke-linecap="round" fill="none" opacity="0.55"/>
+      <path d="M620 200 C590 270 650 300 620 370" stroke="#b9202b" stroke-width="14" stroke-linecap="round" fill="none" opacity="0.7"/>
+      <path d="M720 220 C690 280 750 310 720 370" stroke="#b9202b" stroke-width="14" stroke-linecap="round" fill="none" opacity="0.55"/>
+      <path d="M380 420 L820 420 L780 720 Q780 770 720 770 L480 770 Q420 770 420 720 Z" fill="#b9202b" stroke="#7d1219" stroke-width="12" stroke-linejoin="round"/>
+      <ellipse cx="600" cy="420" rx="220" ry="32" fill="#7d1219"/>
+      <path d="M800 510 Q900 530 900 600 Q900 680 800 660" stroke="#7d1219" stroke-width="22" fill="none" stroke-linecap="round"/>
+      <path d="M450 470 L470 680" stroke="#d44653" stroke-width="14" stroke-linecap="round" opacity="0.55"/>
+    </svg>
+  </template>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <script src="image-slot.js"></script>
+
+  <style>
+    :root {
+      --paper:    #f7f1e7;
+      --card:     #fffdf8;
+      --ink:      #201b16;
+      --ink-soft: #4a4036;
+      --muted:    #837563;
+      --rule:     #e2d6c2;
+      --rule-2:   #d3c4ab;
+      --ruby:     #bb1f2c;
+      --ruby-deep:#7d1219;
+      --ruby-tint:#f6e4dd;
+      --maxw: 720px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; background: var(--paper); color: var(--ink);
+      font-family: "Newsreader", Georgia, serif;
+      font-size: 19px; line-height: 1.6;
+      -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    }
+    .sans { font-family: "Space Grotesk", system-ui, sans-serif; }
+    .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+
+    a { color: var(--ruby); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+    a:hover { color: var(--ruby-deep); }
+
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+
+    /* --- header --- */
+    header.site {
+      border-bottom: 1px solid var(--rule);
+      background: color-mix(in oklab, var(--paper) 90%, transparent);
+      backdrop-filter: blur(6px);
+      position: sticky; top: 0; z-index: 40;
+    }
+    .site-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 24px; max-width: 940px; margin: 0 auto; }
+    .brand { display: inline-flex; align-items: center; gap: 9px; font-family: "Space Grotesk", sans-serif; font-weight: 600; font-size: 17px; letter-spacing: -0.02em; color: var(--ink); text-decoration: none; line-height: 1; }
+    .brand:hover { color: var(--ink); }
+    .brand .glyph { width: 24px; height: 22px; flex-shrink: 0; transform: translateY(-2px); }
+    .brand .rb { color: var(--ruby); }
+    nav.top { display: flex; gap: 22px; font-family: "Space Grotesk", sans-serif; font-size: 14.5px; font-weight: 500; }
+    nav.top a { color: var(--ink-soft); text-decoration: none; }
+    nav.top a:hover { color: var(--ruby); }
+    @media (max-width: 680px) { nav.top { display: none; } }
+
+    /* --- generic section --- */
+    section { padding: 64px 0; border-top: 1px solid var(--rule); }
+    section:first-of-type { border-top: none; }
+    .eyebrow {
+      font-family: "JetBrains Mono", monospace; font-size: 12.5px;
+      letter-spacing: 0.08em; color: var(--ruby); text-transform: lowercase;
+      margin: 0 0 18px;
+    }
+    h2.sec {
+      font-family: "Space Grotesk", sans-serif; font-weight: 600;
+      font-size: 30px; letter-spacing: -0.02em; line-height: 1.1;
+      margin: 0 0 20px; color: var(--ink);
+    }
+    p { margin: 0 0 18px; }
+    p:last-child { margin-bottom: 0; }
+    .lead { font-size: 21px; color: var(--ink-soft); }
+    strong { font-weight: 600; color: var(--ink); }
+    em.i { font-style: italic; }
+
+    /* --- hero --- */
+    .hero { padding: 72px 0 60px; text-align: left; }
+    .hero .kicker {
+      font-family: "JetBrains Mono", monospace; font-size: 13px; color: var(--muted);
+      letter-spacing: 0.04em; margin: 0 0 22px; display: flex; gap: 16px; flex-wrap: wrap; align-items: center;
+    }
+    .hero .kicker .free {
+      background: var(--ruby); color: #fff; padding: 3px 9px; border-radius: 4px;
+      font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; font-size: 11px;
+    }
+    .hero h1 {
+      font-family: "Space Grotesk", sans-serif; font-weight: 700;
+      font-size: clamp(46px, 9vw, 88px); line-height: 0.98; letter-spacing: -0.04em;
+      margin: 0 0 26px; color: var(--ink);
+    }
+    .hero h1 .interp { color: var(--muted); font-weight: 400; }
+    .hero h1 .interp b { color: var(--ruby); font-weight: 700; }
+    .hero .desc { font-family: "Newsreader", serif; font-size: 22px; line-height: 1.5; color: var(--ink-soft); max-width: 30em; margin: 0 0 32px; }
+    .hero .desc b { color: var(--ink); font-weight: 600; }
+
+    .facts { display: flex; flex-wrap: wrap; gap: 0; margin: 32px 0 36px; border: 1px solid var(--rule-2); border-radius: 8px; overflow: hidden; background: var(--card); }
+    .fact { flex: 1 1 33%; min-width: 150px; padding: 16px 18px; border-right: 1px solid var(--rule); }
+    .fact:last-child { border-right: none; }
+    @media (max-width: 560px) { .fact { flex-basis: 100%; border-right: none; border-bottom: 1px solid var(--rule); } .fact:last-child { border-bottom: none; } }
+    .fact dt { font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+    .fact dd { font-family: "Space Grotesk", sans-serif; font-size: 16px; font-weight: 500; margin: 0; color: var(--ink); letter-spacing: -0.01em; }
+
+    /* --- buttons --- */
+    .btn {
+      display: inline-flex; align-items: center; gap: 9px;
+      font-family: "Space Grotesk", sans-serif; font-size: 15.5px; font-weight: 500;
+      padding: 12px 20px; border-radius: 7px; text-decoration: none;
+      transition: transform .15s, background .15s, color .15s;
+    }
+    .btn-primary { background: var(--ruby); color: #fff; }
+    .btn-primary:hover { background: var(--ruby-deep); color: #fff; transform: translateY(-1px); }
+    .btn-ghost { border: 1px solid var(--rule-2); color: var(--ink); background: var(--card); }
+    .btn-ghost:hover { color: var(--ruby); border-color: var(--ruby); }
+    .btn .arr { transition: transform .15s; }
+    .btn:hover .arr { transform: translateX(3px); }
+    .btn-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+    /* --- rsvp --- */
+    .rsvp-card {
+      background: var(--card); border: 1px solid var(--rule-2); border-radius: 12px;
+      padding: 32px; margin-top: 8px;
+    }
+    .rsvp-price { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+    .rsvp-price .big { font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 44px; letter-spacing: -0.03em; color: var(--ink); line-height: 1; }
+    .rsvp-price .strike { font-family: "Space Grotesk", sans-serif; color: var(--muted); text-decoration: line-through; font-size: 20px; }
+    .rsvp-sub { color: var(--muted); font-size: 15px; margin-bottom: 22px; }
+    .rsvp-form { display: flex; flex-direction: column; gap: 10px; }
+    .rsvp-form input {
+      font-family: "Space Grotesk", sans-serif; font-size: 15.5px;
+      padding: 12px 15px; border: 1px solid var(--rule-2); border-radius: 7px;
+      background: var(--paper); color: var(--ink);
+    }
+    .rsvp-form .btn { align-self: flex-start; justify-content: center; }
+    .rsvp-form input:focus { outline: 2px solid var(--ruby); outline-offset: 1px; border-color: var(--ruby); }
+    .rsvp-note { font-family: "JetBrains Mono", monospace; font-size: 12px; color: var(--muted); margin-top: 16px; }
+    .rsvp-ok { display: none; font-family: "Space Grotesk", sans-serif; font-size: 15.5px; color: var(--ruby-deep); margin-top: 14px; font-weight: 500; }
+
+    /* --- schedule --- */
+    .sched { border-collapse: collapse; width: 100%; font-size: 17px; }
+    .sched td { padding: 12px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+    .sched tr:last-child td { border-bottom: none; }
+    .sched .t { font-family: "JetBrains Mono", monospace; font-size: 13px; color: var(--ruby); width: 78px; white-space: nowrap; padding-top: 15px; }
+    .sched .ev { font-family: "Newsreader", serif; color: var(--ink); }
+    .sched .ev .s { display: block; font-size: 14px; color: var(--muted); font-style: italic; }
+    .sched .star td { border-bottom: 1px solid var(--rule); }
+    .sched .dj .ev { color: var(--ruby-deep); font-weight: 500; }
+
+    /* --- cfp list --- */
+    .cfp-crit { list-style: none; padding: 0; margin: 24px 0; display: grid; gap: 2px; }
+    .cfp-crit li { display: grid; grid-template-columns: 30px 1fr; gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--rule); font-size: 17px; }
+    .cfp-crit li:last-child { border-bottom: none; }
+    .cfp-crit .n { font-family: "JetBrains Mono", monospace; color: var(--ruby); font-size: 14px; padding-top: 3px; }
+    .cfp-crit b { display: block; font-family: "Space Grotesk", sans-serif; font-weight: 600; font-size: 16px; margin-bottom: 2px; }
+    .timeline { font-family: "JetBrains Mono", monospace; font-size: 13.5px; margin: 24px 0 0; border-top: 1px solid var(--rule); }
+    .timeline div { display: grid; grid-template-columns: 120px 1fr; gap: 14px; padding: 9px 0; border-bottom: 1px solid var(--rule); }
+    .timeline .d { color: var(--muted); }
+    .timeline .key .d { color: var(--ruby); }
+    .timeline .key span:last-child { color: var(--ink); }
+    @media (max-width: 480px) { .timeline div { grid-template-columns: 96px 1fr; gap: 10px; } }
+
+    /* --- venue --- */
+    .venue-photo { width: 100%; height: 300px; border-radius: 10px; overflow: hidden; border: 1px solid var(--rule-2); margin-bottom: 24px; }
+    .venue-meta { font-family: "Space Grotesk", sans-serif; font-size: 15.5px; }
+    .venue-meta div { display: flex; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--rule); }
+    .venue-meta div:last-child { border-bottom: none; }
+    .venue-meta dt { color: var(--muted); width: 130px; flex-shrink: 0; }
+    .venue-meta dd { margin: 0; color: var(--ink); }
+
+    /* --- sponsors --- */
+    .spons { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+    .spon { flex: 1 1 200px; background: var(--card); border: 1px solid var(--rule); border-radius: 10px; padding: 22px; }
+    .spon .tier { font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+    .spon .name { font-family: "Space Grotesk", sans-serif; font-weight: 600; font-size: 22px; color: var(--ink); letter-spacing: -0.01em; }
+    .spon.cta { display: flex; align-items: center; justify-content: center; text-align: center; }
+    .spon.cta a { font-family: "Space Grotesk", sans-serif; font-weight: 500; font-size: 15px; text-decoration: none; }
+
+    /* --- faq --- */
+    .faq-item { border-bottom: 1px solid var(--rule); }
+    .faq-item:first-child { border-top: 1px solid var(--rule); }
+    .faq-q { display: flex; justify-content: space-between; align-items: center; gap: 16px; cursor: pointer; padding: 18px 0; font-family: "Space Grotesk", sans-serif; font-weight: 500; font-size: 18px; color: var(--ink); list-style: none; }
+    .faq-q::-webkit-details-marker { display: none; }
+    .faq-q .plus { color: var(--ruby); font-size: 22px; transition: transform .2s; flex-shrink: 0; line-height: 1; }
+    details[open] .faq-q .plus { transform: rotate(45deg); }
+    .faq-a { padding: 0 0 20px; color: var(--ink-soft); font-size: 17px; max-width: 60ch; }
+    .faq-a p { margin-bottom: 12px; }
+
+    /* --- footer --- */
+    footer.site { border-top: 1px solid var(--rule); padding: 48px 0 40px; }
+    .foot-top { display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
+    .foot-brand .name { font-family: "Space Grotesk", sans-serif; font-weight: 600; font-size: 19px; color: var(--ink); margin: 12px 0 6px; letter-spacing: -0.01em; }
+    .foot-brand .name .rb { color: var(--ruby); }
+    .foot-brand p { color: var(--muted); font-size: 15px; max-width: 34ch; font-family: "Newsreader", serif; }
+    .foot-links { display: flex; gap: 40px; font-family: "Space Grotesk", sans-serif; font-size: 14.5px; }
+    .foot-links h5 { font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; font-weight: 400; }
+    .foot-links ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 9px; }
+    .foot-links a { color: var(--ink-soft); text-decoration: none; }
+    .foot-links a:hover { color: var(--ruby); }
+    .foot-bottom { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--rule); font-family: "JetBrains Mono", monospace; font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+    ::selection { background: var(--ruby); color: #fff; }
+  </style>
+</head>
+<body>
+
+  <header class="site">
+    <div class="site-inner">
+      <a href="#top" class="brand">
+        <svg class="glyph" viewBox="0 0 36 32" fill="none" aria-hidden="true">
+          <path d="M14 4 C13 6 15 7 14 9" stroke="#bb1f2c" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.55"/>
+          <path d="M19 3 C18 5 20 6 19 9" stroke="#bb1f2c" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.7"/>
+          <path d="M24 4 C23 6 25 7 24 9" stroke="#bb1f2c" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.55"/>
+          <path d="M8 12 L28 12 L26 26 Q26 29 23 29 L13 29 Q10 29 10 26 Z" fill="#bb1f2c" stroke="#7d1219" stroke-width="1.2" stroke-linejoin="round"/>
+          <ellipse cx="18" cy="12" rx="10" ry="1.6" fill="#7d1219"/>
+          <path d="M27 16 Q32 17 32 21 Q32 25 27 24" stroke="#7d1219" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+          <path d="M11 14 L12 24" stroke="#d44653" stroke-width="1" stroke-linecap="round" opacity="0.55"/>
+        </svg>
+        <span>hygge<span class="rb">.rb</span></span>
+      </a>
+      <nav class="top">
+        <a href="#about">About</a>
+        <a href="#rsvp">RSVP</a>
+        <a href="#cfp">CFP</a>
+        <a href="#schedule">Schedule</a>
+        <a href="#venue">Venue</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero" style="border-top:none">
+      <div class="wrap">
+        <div class="kicker">
+          <span class="free">Free</span>
+          <span>Sat 28 Nov 2026</span>
+          <span>·</span>
+          <span>Aarhus, Denmark</span>
+        </div>
+        <h1>hygge<span class="interp">.<b>rb</b></span></h1>
+        <p class="desc">A <b>tiny, free, one-day</b> Ruby gathering in Aarhus, Denmark. A few rooms, several talks, a long lunch, and a relaxed DJ set. <b>Everyone should get to hygge</b>, so come hygge with us.</p>
+        <div class="facts">
+          <div class="fact"><dt>When</dt><dd>Sat 28 Nov 2026<br>10:00 – 19:00</dd></div>
+          <div class="fact"><dt>Where</dt><dd>Åboulevarden 18, 2.<br>Aarhus C</dd></div>
+          <div class="fact"><dt>Cost</dt><dd>Free · RSVP<br>~40 seats</dd></div>
+        </div>
+        <div class="btn-row">
+          <a href="#rsvp" class="btn btn-primary">RSVP, it's free <span class="arr">→</span></a>
+          <a href="#cfp" class="btn btn-ghost">Submit a talk</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about">
+      <div class="wrap">
+        <p class="eyebrow"># about</p>
+        <h2 class="sec">What this is</h2>
+        <p class="lead">For one Saturday in November, the Ruby community gathers on the second floor of an office by the river in Aarhus, for a day shaped less like a conference and more like a long lunch with friends.</p>
+        <p>A few rooms, several talks from ten until six, then the lights go low and a DJ closes the day at seven. No rush to the next session, no FOMO, just the kind of conversations that only happen when everyone's in the same building for the day.</p>
+        <p>It's <strong>free to attend</strong>, capped at around 40 people, and open to anyone who writes Ruby, or wants to. <em class="i">Everyone should be able to hygge.</em></p>
+      </div>
+    </section>
+
+    <!-- RSVP -->
+    <section id="rsvp">
+      <div class="wrap">
+        <p class="eyebrow"># rsvp</p>
+        <h2 class="sec">Save your seat</h2>
+        <div class="rsvp-card">
+          <div class="rsvp-price">
+            <span class="big">Free</span>
+          </div>
+          <p class="rsvp-sub">Includes talks, a long lunch, afternoon coffee, and the evening DJ. Just bring yourself. Space is capped at 40, so please only reserve if you plan to come.</p>
+          <form class="rsvp-form" id="rsvp-form">
+            <input type="text" id="rsvp-name" placeholder="Your name" aria-label="Your name" required>
+            <input type="email" id="rsvp-email" placeholder="you@example.com" aria-label="Email address" required>
+            <input type="text" id="rsvp-diet" placeholder="Dietary needs or allergies (optional)" aria-label="Dietary needs or allergies">
+            <button type="submit" class="btn btn-primary" id="rsvp-btn">Reserve my seat <span class="arr">→</span></button>
+          </form>
+          <p class="rsvp-ok" id="rsvp-ok">Tak! Your seat is reserved. See you on the 28th. ☕</p>
+          <p class="rsvp-note">free · one confirmation email · release your seat if plans change</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CFP -->
+    <section id="cfp">
+      <div class="wrap">
+        <p class="eyebrow"># cfp · open now</p>
+        <h2 class="sec">Tell us your story</h2>
+        <p>We're looking for <strong>several talks</strong>, all chosen through an open call. We want talks from people who have built something, broken something, or fixed something, and want to bring the rest of us along for the story. All talks are given in English.</p>
+        <ul class="cfp-crit">
+          <li><span class="n">i.</span><span><b>A specific story.</b> Not a survey, not a tour. The bug you chased for nine months. The library you wish existed.</span></li>
+          <li><span class="n">ii.</span><span><b>Ruby, somewhere in it.</b> The talk needn't be <em class="i">about</em> Ruby, but Ruby should be in the room. Non-technical talks welcome too.</span></li>
+          <li><span class="n">iii.</span><span><b>A point of view.</b> An opinion, an argument, a thing you've changed your mind about. Take a stance.</span></li>
+          <li><span class="n">iv.</span><span><b>About 45 minutes.</b> Long enough to be honest, questions and a graceful exit included.</span></li>
+        </ul>
+        <div class="btn-row" style="margin:26px 0 8px">
+          <a href="#" class="btn btn-primary">Submit a proposal <span class="arr">→</span></a>
+          <a href="#" class="btn btn-ghost">Read the guidelines</a>
+        </div>
+        <div class="timeline">
+          <div class="key"><span class="d">Wed 5 Aug</span><span>CFP opens.</span></div>
+          <div><span class="d">Weeks 1–2</span><span>First wave of submissions, the eager beavers.</span></div>
+          <div><span class="d">Mid Aug</span><span>A quieter stretch; we're out promoting.</span></div>
+          <div><span class="d">Early Sep</span><span>“Two weeks left” reminders; submissions accelerate.</span></div>
+          <div class="key"><span class="d">Sat 5 Sep</span><span>CFP closes. The last week is, predictably, the busiest.</span></div>
+          <div><span class="d">Sep</span><span>Selection committee reviews; acceptances confirmed.</span></div>
+          <div class="key"><span class="d">Sat 26 Sep</span><span>Public lineup announcement.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCHEDULE -->
+    <section id="schedule">
+      <div class="wrap">
+        <p class="eyebrow"># schedule · one day</p>
+        <h2 class="sec">A Saturday, unhurried</h2>
+        <p style="margin-bottom:28px">Times are indicative, the final programme lands in September once the talks are confirmed.</p>
+        <table class="sched">
+          <tr><td class="t">10:00</td><td class="ev">Doors & filter coffee<span class="s">Åboulevarden 18, 2nd floor</span></td></tr>
+          <tr><td class="t">10:30</td><td class="ev">Opening remarks</td></tr>
+          <tr><td class="t">10:45</td><td class="ev">Three talks · morning block<span class="s">45 minutes each, with breaks</span></td></tr>
+          <tr><td class="t">12:30</td><td class="ev">Long lunch<span class="s">one hour, unrushed</span></td></tr>
+          <tr><td class="t">13:30</td><td class="ev">Lightning talks<span class="s">5 minutes each, sign up at lunch</span></td></tr>
+          <tr><td class="t">14:00</td><td class="ev">Three talks · afternoon</td></tr>
+          <tr><td class="t">16:00</td><td class="ev">Coffee break</td></tr>
+          <tr><td class="t">16:30</td><td class="ev">Two talks · closing block</td></tr>
+          <tr><td class="t">17:45</td><td class="ev">Closing remarks & dørstop drinks</td></tr>
+          <tr class="dj"><td class="t">18:00</td><td class="ev">DJ set, dancing, talking, both<span class="s">main room, lights down, no rush</span></td></tr>
+          <tr><td class="t">19:00</td><td class="ev">Last call<span class="s">we close at seven on the dot</span></td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- VENUE -->
+    <section id="venue">
+      <div class="wrap">
+        <p class="eyebrow"># venue · aarhus</p>
+        <h2 class="sec">By the river, second floor</h2>
+        <div class="venue-photo">
+          <image-slot id="venue-aarhus" shape="rect" fit="cover" src="assets/venue-dentsu-aarhus.png" placeholder="Drop a photo of the venue / Åboulevarden"></image-slot>
+        </div>
+        <p>We're on the <strong>second floor</strong>, up the stairs, of an office right on Åboulevarden, the café-lined street that runs along the old river in the heart of Aarhus. Everything is a short walk away: the cathedral, ARoS, the Latin Quarter, the harbour. The city is small enough that you won't need more than good shoes.</p>
+        <dl class="venue-meta" style="margin-top:22px">
+          <div><dt>Address</dt><dd>Åboulevarden 18, 2. sal · 8000 Aarhus C, Denmark</dd></div>
+          <div><dt>From the station</dt><dd>8 minutes on foot</dd></div>
+        </dl>
+        <p style="margin-top:20px"><a href="https://maps.apple.com/?address=Åboulevarden%2018,%208000%20Aarhus,%20Denmark&q=hygge.rb" target="_blank" rel="noopener">Open in Maps →</a></p>
+      </div>
+    </section>
+
+    <!-- SPONSORS -->
+    <section id="sponsors">
+      <div class="wrap">
+        <p class="eyebrow"># made possible by</p>
+        <h2 class="sec">Our friends</h2>
+        <p>hygge.rb is free because a few good companies pick up the tab. We keep the list short and the booths nonexistent, just a thank-you and a logo.</p>
+        <div class="spons">
+          <div class="spon"><div class="tier">Host</div><div class="name">Merkle</div></div>
+          <div class="spon"><div class="tier">Headline</div><div class="name">Dentsu</div></div>
+          <div class="spon cta"><a href="#">Become a sponsor →</a></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq">
+      <div class="wrap">
+        <p class="eyebrow"># quietly asked</p>
+        <h2 class="sec">Questions</h2>
+        <details class="faq-item" open>
+          <summary class="faq-q">Is it really free?<span class="plus">+</span></summary>
+          <div class="faq-a"><p>Yes, free to attend, thanks to our sponsors. You just need to RSVP, because space is capped at around 40. If you register and can't make it, please release your seat so someone else can take it.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">Will talks be recorded?<span class="plus">+</span></summary>
+          <div class="faq-a"><p>Yes, every talk is recorded and published for free on YouTube about two weeks after. There's no livestream, though, the room is for the people in the room.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">I'm new to Ruby. Should I come?<span class="plus">+</span></summary>
+          <div class="faq-a"><p>All levels are welcome. Talks aim for substance over jargon, and there's plenty of time to meet people over lunch and coffee.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">What about food and allergies?<span class="plus">+</span></summary>
+          <div class="faq-a"><p>Lunch and coffee are included. Every meal has a clearly-labelled vegetarian and vegan option, and we ask about allergies in the RSVP form so the kitchen can accommodate them individually.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">I'd like to speak, what's the deadline?<span class="plus">+</span></summary>
+          <div class="faq-a"><p>The CFP closes 5 September 2026 at 23:59 CET. Talks are around 45 minutes including questions. We accept several, and the public lineup is announced 26 September. <a href="#cfp">Submit a proposal.</a></p></div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">Can my company sponsor?<span class="plus">+</span></summary>
+          <div class="faq-a"><p>We'd love that, sponsors are what keep the day free. Email <a href="#">sponsor@hygge.rb</a> for the prospectus.</p></div>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <svg width="30" height="27" viewBox="0 0 36 32" fill="none" aria-hidden="true">
+            <path d="M14 4 C13 6 15 7 14 9" stroke="#bb1f2c" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.55"/>
+            <path d="M19 3 C18 5 20 6 19 9" stroke="#bb1f2c" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.7"/>
+            <path d="M24 4 C23 6 25 7 24 9" stroke="#bb1f2c" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.55"/>
+            <path d="M8 12 L28 12 L26 26 Q26 29 23 29 L13 29 Q10 29 10 26 Z" fill="#bb1f2c" stroke="#7d1219" stroke-width="1.2" stroke-linejoin="round"/>
+            <ellipse cx="18" cy="12" rx="10" ry="1.6" fill="#7d1219"/>
+            <path d="M27 16 Q32 17 32 21 Q32 25 27 24" stroke="#7d1219" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+          </svg>
+          <div class="name">hygge<span class="rb">.rb</span></div>
+          <p>A tiny, free, one-day Ruby gathering in Aarhus, Denmark. Saturday 28 November 2026.</p>
+        </div>
+        <div class="foot-links">
+          <div>
+            <h5>Event</h5>
+            <ul>
+              <li><a href="#about">About</a></li>
+              <li><a href="#rsvp">RSVP</a></li>
+              <li><a href="#cfp">CFP</a></li>
+              <li><a href="#schedule">Schedule</a></li>
+            </ul>
+          </div>
+          <div>
+            <h5>More</h5>
+            <ul>
+              <li><a href="#venue">Venue</a></li>
+              <li><a href="#">Code of conduct</a></li>
+              <li><a href="#">hello@hygge.rb</a></li>
+              <li><a href="#">@hyggerb</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <span>© 2026 hygge.rb</span>
+        <span>Made with Ruby on Rails</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // RSVP form: fake-submit acknowledgement
+    const form = document.getElementById("rsvp-form");
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = document.getElementById("rsvp-name");
+      const email = document.getElementById("rsvp-email");
+      if (!name.value.trim()) { name.focus(); return; }
+      if (!email.value || !email.checkValidity()) { email.focus(); return; }
+      form.style.display = "none";
+      document.getElementById("rsvp-ok").style.display = "block";
+    });
+  </script>
+</body>
+</html>

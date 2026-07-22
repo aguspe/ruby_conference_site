@@ -1,10 +1,43 @@
+databases:
+  - name: hyggerb-db
+    databaseName: hyggerb
+    plan: basic-256mb
+    postgresMajorVersion: "16"
+
 services:
   - type: web
-    name: ruby-dk-conference
-    runtime: static
-    buildCommand: ""
-    staticPublishPath: .
-    headers:
-      - path: /*
-        name: Cache-Control
-        value: public, max-age=3600
+    name: hyggerb
+    runtime: ruby
+    plan: starter
+    region: frankfurt
+    buildCommand: "./bin/render-build.sh"
+    startCommand: "bundle exec puma -C config/puma.rb"
+    healthCheckPath: /up
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: hyggerb-db
+          property: connectionString
+      - key: RAILS_MASTER_KEY
+        sync: false
+      - key: RAILS_ENV
+        value: production
+      - key: RAILS_SERVE_STATIC_FILES
+        value: "true"
+      - key: RAILS_LOG_TO_STDOUT
+        value: "true"
+      # Puma runs single-process on purpose: config.cache_store = :memory_store
+      # backs the RSVP rate_limit, which is per-process. Do NOT add a `workers`
+      # directive to config/puma.rb (or set WEB_CONCURRENCY) without first moving
+      # the rate-limit counter to a shared store (e.g. Redis) — otherwise the
+      # 5/min limit silently becomes 5×workers.
+      - key: APP_HOST
+        value: hyggerb.dk
+      - key: ORGANISER_EMAIL
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: ADMIN_USER
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false

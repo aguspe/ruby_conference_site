@@ -1,0 +1,33 @@
+<section>
+  <div class="wrap admin-wrap">
+    <p class="eyebrow"># rsvps</p>
+    <h2 class="sec">
+      <%= Rsvp.seats_taken %> / <%= Rsvp::CAPACITY %> seats
+    </h2>
+    <p class="lead">
+      <%= Rsvp.seats_left %> left ·
+      <%= Rsvp.waitlist_taken %> / <%= Rsvp::WAITLIST_CAPACITY %> on the waitlist
+    </p>
+
+    <p><%= link_to "Download CSV", admin_rsvps_path(format: :csv), class: "btn btn-ghost" %></p>
+
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Name</th><th>Email</th><th>Dietary</th><th>Status</th><th>When</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @rsvps.each do |rsvp| %>
+          <tr>
+            <td><%= rsvp.name %></td>
+            <td><%= mail_to rsvp.email %></td>
+            <td><%= rsvp.dietary.presence || "—" %></td>
+            <td><%= rsvp.waitlisted? ? "waitlist" : "confirmed" %></td>
+            <td><%= rsvp.created_at.strftime("%d %b %Y, %H:%M") %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</section>

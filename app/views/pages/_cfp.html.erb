@@ -1,0 +1,27 @@
+<section id="cfp">
+  <div class="wrap">
+    <p class="eyebrow"># cfp · open now</p>
+    <h2 class="sec">Tell us your story</h2>
+    <p>We're looking for <strong>several talks</strong>, all chosen through an open call. We want talks from people who have built something, broken something, or fixed something, and want to bring the rest of us along for the story. All talks are given in English.</p>
+    <ul class="cfp-crit">
+      <% EVENT["cfp_criteria"].each do |crit| %>
+        <li>
+          <span class="n"><%= crit["numeral"] %></span>
+          <span><b><%= crit["title"] %></b> <%= raw crit["body"] %></span>
+        </li>
+      <% end %>
+    </ul>
+    <div class="btn-row cfp-actions">
+      <a href="<%= EVENT.dig("links", "cfp_submit") %>" class="btn btn-primary">Submit a proposal <span class="arr">→</span></a>
+      <a href="<%= EVENT.dig("links", "cfp_guidelines") %>" class="btn btn-ghost">Read the guidelines</a>
+    </div>
+    <div class="timeline">
+      <% EVENT["cfp_timeline"].each do |row| %>
+        <div class="<%= "key" if row["key"] %>">
+          <span class="d"><%= row["date"] %></span>
+          <span><%= row["text"] %></span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>

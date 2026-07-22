@@ -1,0 +1,5 @@
+<%# Every RSVP response must carry the turbo-frame the form targets. Without it
+    Turbo renders "Content missing" instead of the partial. %>
+<%= turbo_frame_tag "rsvp_form" do %>
+  <%= render partial: partial, locals: locals %>
+<% end %>

@@ -1,0 +1,20 @@
+<section id="schedule">
+  <div class="wrap">
+    <p class="eyebrow"># schedule · one day</p>
+    <h2 class="sec">A Saturday, unhurried</h2>
+    <p class="sched-note">Times are indicative, the final programme lands in September once the talks are confirmed.</p>
+    <table class="sched">
+      <tbody>
+        <% EVENT["schedule"].each do |slot| %>
+          <tr class="<%= "dj" if slot["dj"] %>">
+            <td class="t"><%= slot["time"] %></td>
+            <td class="ev">
+              <%= slot["event"] %>
+              <% if slot["sub"] %><span class="s"><%= slot["sub"] %></span><% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</section>

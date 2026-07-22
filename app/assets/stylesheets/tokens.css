@@ -1,0 +1,13 @@
+:root {
+  --paper:    #f7f1e7;
+  --card:     #fffdf8;
+  --ink:      #201b16;
+  --ink-soft: #4a4036;
+  --muted:    #837563;
+  --rule:     #e2d6c2;
+  --rule-2:   #d3c4ab;
+  --ruby:     #bb1f2c;
+  --ruby-deep:#7d1219;
+  --ruby-tint:#f6e4dd;
+  --maxw: 720px;
+}

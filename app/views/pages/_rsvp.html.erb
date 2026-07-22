@@ -1,0 +1,21 @@
+<section id="rsvp">
+  <div class="wrap">
+    <p class="eyebrow"># rsvp</p>
+    <h2 class="sec">Save your seat</h2>
+    <div class="rsvp-card">
+      <div class="rsvp-price">
+        <span class="big">Free</span>
+      </div>
+      <p class="rsvp-sub">Includes talks, a long lunch, afternoon coffee, and the evening DJ. Just bring yourself. Space is capped at 40, so please only reserve if you plan to come.</p>
+
+      <%= turbo_frame_tag "rsvp_form" do %>
+        <% if Rsvp.full? %>
+          <p class="rsvp-sub">We're at <%= Rsvp::CAPACITY %> people. You can still join the waitlist.</p>
+        <% end %>
+        <%= render "rsvps/form", rsvp: Rsvp.new %>
+      <% end %>
+
+      <p class="rsvp-note">free · one confirmation email · release your seat if plans change</p>
+    </div>
+  </div>
+</section>
